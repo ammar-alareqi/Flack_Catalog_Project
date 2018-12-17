@@ -1,0 +1,24 @@
+{% extends "init.html" %}
+
+{% block title %} Edit An Item {% endblock %}
+
+{% block header %} 
+    <div class="header_puplic">
+        <a href="{{url_for('logout')}}" class="logout_button">logout</a>
+    </div>
+{% endblock %}
+
+{% block content %} 
+    <form action="#" method="POST" class="form">
+        <p>Edit name:</p>
+        <input type="text" size="30" name="name" placeholder="Enter a new item" />
+        <p>Description:</p>
+        <input type="text" size="30" name="description" placeholder="describe the new item" />
+        <p>Category</p>
+        <select name="category">
+            <option>category</option>
+        </select>
+        <br />
+        <input type="submit" value="Delete" />
+    </form>
+{% endblock %}

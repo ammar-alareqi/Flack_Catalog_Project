@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <title> {% block title %} {% endblock %} </title>
+    </head>
+    <body>
+        <header class = 'header'>
+            <div class = 'title'>
+                Catalog
+            </div>
+            {% block header %}
+            {% endblock %}
+        </header>
+        <section class = 'container'>
+            <article>
+                {% block content %}
+                {% endblock %}
+            </article>
+        </section>
+    </body>
+</html>
