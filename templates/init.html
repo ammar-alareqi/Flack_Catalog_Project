@@ -1,6 +1,8 @@
 <html>
     <head>
         <title> {% block title %} {% endblock %} </title>
+        {% block head %}
+        {% endblock %}
     </head>
     <body>
         <header class = 'header'>
@@ -11,7 +13,7 @@
             {% endblock %}
         </header>
         <section class = 'container'>
-            <article>
+            <article class="content">
                 {% block content %}
                 {% endblock %}
             </article>

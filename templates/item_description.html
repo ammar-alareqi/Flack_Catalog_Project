@@ -10,11 +10,9 @@
 
 {% block content %} 
     <div class="items">
-    <h3>Items</h3>
-    {% for item in items %}
-    <p><a href="{{url_for('showSelectedItem', item_id = item.id)}}">
-        {{item.name}} ( {{ item.category.name }} ) 
-    </a></p>
+    {% for i in item %}
+        <h3> {{i.name}} ( {{ i.category.name }} ) </h3>
+        <p> {{i.description}} </p>
     {% endfor %}
     </div>
 {% endblock %}
