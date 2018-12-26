@@ -1,15 +1,23 @@
 {% extends "init.html" %}
 
-{% block title %} Items {% endblock %}
+{% block title %} Items (Logged In){% endblock %}
 
 {% block header %} 
     <div class="header_puplic">
-        <a href="{{url_for('logout')}}" class="logout_button">logout</a>
+        <a href="{{url_for('gdisconnect')}}" class="logout_button">logout</a>
+    </div>
+    <div>
+        <p><a href="{{url_for('addItem')}}">Add new item</a></p>
     </div>
 {% endblock %}
 
 {% block content %} 
     <div class="items">
-
+        <h3>Items</h3>
+        {% for item in items %}
+        <p><a href="{{url_for('showSelectedItemUser', item_id = item.id)}}">
+            {{item.name}} ( {{ item.category.name }} ) 
+        </a></p>
+        {% endfor %}
     </div>
 {% endblock %}

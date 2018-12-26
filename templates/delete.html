@@ -4,13 +4,13 @@
 
 {% block header %} 
     <div class="header_puplic">
-        <a href="{{url_for('logout')}}" class="logout_button">logout</a>
+        <a href="{{url_for('gdisconnect')}}" class="logout_button">logout</a>
     </div>
 {% endblock %}
 
 {% block content %} 
-    <form action="#" method="POST" class="form">
-        <p>Are you sure you want to delete this item.</p> 
+    <form action="{{url_for('deleteItem', itemid = item.id)}}" method="POST" class="form">
+        <p>Are you sure you want to delete this item ( {{item.name}} ).</p> 
         <input type="submit" value="Delete" />
     </form>
 {% endblock %}
