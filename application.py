@@ -141,9 +141,8 @@ def editItem(itemid):
         else:
             return render_template('edit.html',categories=categories, item=item)
     else:
-        # return redirect(url_for('showCatalogUser'))
-        return redirect(url_for('showCatalog', categories=categories,
-        items=items))
+        flash('Sorry you cannot edit this item!')
+        return redirect(url_for('showCatalogUser'))
 
 
 @app.route('/catalog/<int:itemid>/delete/', methods=['GET', 'POST'])
@@ -163,8 +162,8 @@ def deleteItem(itemid):
         else:
             return render_template('delete.html', item=item)
     else:
-        return redirect(url_for('showCatalog', categories=categories,
-        items=items))
+        flash('Sorry you cannot delete this item!')
+        return redirect(url_for('showCatalogUser'))
 
 
 
@@ -292,6 +291,29 @@ def gdisconnect():
         response = make_response(json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
+
+
+# Start JSON API 
+
+
+@app.route('/catalog/<int:category_id>/items/JSON/')
+def itemsJSON(category_id):
+    category = session.query(Category).filter_by(id=category_id).one()
+    items = session.query(Item).filter_by(category_id=category_id).all()
+    return jsonify(CategoryItems=[i.serialize for i in items])
+
+
+@app.route('/catalog/<int:item_id>/selectedItem/JSON/')
+def selectedItemJSON(item_id):
+    item = session.query(Item).filter_by(id=item_id).one()
+    return jsonify(CategoryItems=[item.serialize])
+
+
+
+@app.route('/catalog/categories/JSON/')
+def categoriesJSON():
+    catgs = session.query(Category).all()
+    return jsonify(Categories=[g.serialize for g in catgs])
 
 
 if __name__ == '__main__':

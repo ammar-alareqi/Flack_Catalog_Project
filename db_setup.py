@@ -14,7 +14,13 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(150), nullable=False)
     email = Column(String(150), nullable=False)
-    # photo = Column(LargeBinary, nullable=False)
+
+    @property
+    def serialize(self):
+        return {
+            'name': self.name,
+            'email': self.email,
+        }
 
 
 class Category(Base):
@@ -24,6 +30,13 @@ class Category(Base):
     name = Column(String(150), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
+
+    @property
+    def serialize(self):
+        return {
+            'name': self.name,
+            'id': self.id,
+        }
 
 
 class Item(Base):
@@ -37,6 +50,15 @@ class Item(Base):
     category = relationship(Category)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
+
+    @property
+    def serialize(self):
+        return {
+            'name': self.name,
+            'description': self.description,
+            'date': self.date,
+            'category': self.category.name,
+        }
 
 
 engine = create_engine('sqlite:///cafemenu.db')
