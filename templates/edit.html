@@ -11,9 +11,9 @@
 {% block content %} 
     <form action="{{url_for('editItem', itemid = item.id)}}" method="POST" class="form">
         <p>Edit name:</p>
-        <input type="text" size="30" name="name" placeholder="Enter a new item" />
+        <input type="text" size="30" name="name" placeholder="Enter a new item" required />
         <p>Description:</p>
-        <input type="text" size="30" name="description" placeholder="describe the new item" />
+        <input type="text" size="30" name="description" placeholder="describe the new item" required />
         <p>Category</p>
         <select name="category">
                 {% for c in categories %}

@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, redirect, jsonify, url_for, flash 
-from sqlalchemy import create_engine, asc, desc 
+from flask import Flask, render_template, request, redirect
+from flask import jsonify, url_for, flash
+from sqlalchemy import create_engine, asc, desc
 from sqlalchemy.orm import sessionmaker
 from db_setup import Base, User, Category, Item
 import datetime
@@ -37,27 +38,19 @@ def showCatalog():
     categories = session.query(Category).all()
     items = session.query(Item).order_by(desc(Item.date)).limit(4)
     return render_template('catalog.html', categories=categories, items=items)
-    #return render_template('catalog.html')
-
-
-@app.route('/catalog/category/')
-def showCategory():
-    # add your code
-    # return render_template('categories.html')
-    pass
 
 
 @app.route('/catalog/<int:category_id>/items/')
 def showItems(category_id):
     items = session.query(Item).filter_by(category_id=category_id).order_by(
         desc(Item.date))
-    return render_template('items.html', items = items)
+    return render_template('items.html', items=items)
 
 
 @app.route('/catalog/<int:item_id>/item_description/')
 def showSelectedItem(item_id):
     selectedItem = session.query(Item).filter_by(id=item_id).all()
-    return render_template('item_description.html', item = selectedItem)
+    return render_template('item_description.html', item=selectedItem)
 
 
 @app.route('/catalog/user/')
@@ -65,10 +58,13 @@ def showCatalogUser():
     categories = session.query(Category).all()
     items = session.query(Item).order_by(desc(Item.date)).limit(4)
     if 'username' in login_session:
-        return render_template('catalog_user.html',
-        categories=categories, items=items)
+        return render_template(
+            'catalog_user.html',
+            categories=categories, items=items)
     else:
-        return render_template('catalog.html', categories=categories, items=items)
+        return render_template(
+            'catalog.html', categories=categories,
+            items=items)
 
 
 @app.route('/catalog/<int:category_id>/items/user/')
@@ -77,9 +73,11 @@ def showItemsUser(category_id):
     items = session.query(Item).filter_by(category_id=category_id).order_by(
         desc(Item.date))
     if 'username' in login_session:
-        return render_template('items_user.html', items = items)
+        return render_template('items_user.html', items=items)
     else:
-        return render_template('catalog.html', categories=categories, items=items)
+        return render_template(
+            'catalog.html', categories=categories,
+            items=items)
 
 
 @app.route('/catalog/<int:item_id>/item_description/user/')
@@ -88,11 +86,13 @@ def showSelectedItemUser(item_id):
     items = session.query(Item).order_by(desc(Item.date)).limit(4)
     if 'username' in login_session:
         selectedItem = session.query(Item).filter_by(id=item_id).all()
-        return render_template('item_description_user.html',
-        item = selectedItem)
+        return render_template(
+            'item_description_user.html',
+            item=selectedItem)
     else:
-        return render_template('catalog.html', categories=categories,
-        items=items)
+        return render_template(
+            'catalog.html', categories=categories,
+            items=items)
 
 
 @app.route('/catalog/add/', methods=['GET', 'POST'])
@@ -102,12 +102,12 @@ def addItem():
     if 'username' in login_session:
         if request.method == 'POST':
             newitem = Item(
-                name=request.form['name'], 
+                name=request.form['name'],
                 description=request.form['description'],
                 date=datetime.datetime.now(),
                 category=session.query(Category).filter_by(
                                 id=request.form['category']).one(),
-                user_id = login_session['email'])
+                user_id=login_session['email'])
             session.add(newitem)
             session.commit()
             flash('A new item was added!')
@@ -115,8 +115,8 @@ def addItem():
         else:
             return render_template('add.html', categories=categories)
     else:
-        return redirect(url_for('showCatalogUser', categories=categories,
-        items=items))
+        return redirect(
+            url_for('showCatalogUser', categories=categories, items=items))
 
 
 @app.route('/catalog/<int:itemid>/edit/', methods=['GET', 'POST'])
@@ -131,7 +131,7 @@ def editItem(itemid):
         if request.method == 'POST':
             item.name = request.form['name']
             item.description = request.form['description']
-            item.category=session.query(Category).filter_by(
+            item.category = session.query(Category).filter_by(
                                 id=request.form['category']).one()
             item.date = datetime.datetime.now()
             session.add(item)
@@ -139,7 +139,9 @@ def editItem(itemid):
             flash('Item was edited successfully!')
             return redirect(url_for('showCatalogUser'))
         else:
-            return render_template('edit.html',categories=categories, item=item)
+            return render_template(
+                'edit.html', categories=categories,
+                item=item)
     else:
         flash('Sorry you cannot edit this item!')
         return redirect(url_for('showCatalogUser'))
@@ -166,13 +168,12 @@ def deleteItem(itemid):
         return redirect(url_for('showCatalogUser'))
 
 
-
 @app.route('/catalog/login/')
 def login():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
-    #return "The current session state is %s" % login_session['state']
+    # return "The current session state is %s" % login_session['state']
     return render_template('login.html', STATE=state)
 
 
@@ -228,8 +229,8 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_g_id = login_session.get('g_id')
     if stored_access_token is not None and g_id == stored_g_id:
-        response = make_response(json.dumps('Current user is already connected.'),
-                                 200)
+        response = make_response(
+            json.dumps('Current user is already connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -248,15 +249,14 @@ def gconnect():
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
-    #user_id = login_session['email']
-
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;'
+    output += '-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
@@ -267,13 +267,16 @@ def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token is None:
         print 'Access Token is None'
-        response = make_response(json.dumps('Current user not connected.'), 401)
+        response = make_response(
+            json.dumps('Current user not connected.'),
+            401)
         response.headers['Content-Type'] = 'application/json'
         return response
     print 'In gdisconnect access token is %s', access_token
     print 'User name is: '
     print login_session['username']
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s'
+    % login_session['access_token']
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
     print 'result is '
@@ -284,16 +287,19 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
+        response = make_response(
+            json.dumps('Successfully disconnected.'),
+            200)
         response.headers['Content-Type'] = 'application/json'
         return response
     else:
-        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+        response = make_response(
+            json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
 
 
-# Start JSON API 
+# Start JSON API
 
 
 @app.route('/catalog/<int:category_id>/items/JSON/')
@@ -307,7 +313,6 @@ def itemsJSON(category_id):
 def selectedItemJSON(item_id):
     item = session.query(Item).filter_by(id=item_id).one()
     return jsonify(CategoryItems=[item.serialize])
-
 
 
 @app.route('/catalog/categories/JSON/')
